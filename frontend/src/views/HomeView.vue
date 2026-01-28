@@ -54,7 +54,7 @@
             </div>
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
             <p class="text-gray-600 leading-relaxed text-lg">
-              To generate, verify, and disseminate technologies for the sustained growth of the root crop industry in the Northern Philippines, ensuring food security and economic stability for local farmers.
+              To develop efficient root crops production and utilization systems.
             </p>
           </div>
 
@@ -64,7 +64,7 @@
             </div>
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
             <p class="text-gray-600 leading-relaxed text-lg">
-              A premier center of excellence in root crops research, training, and extension services, recognized globally for its contribution to sustainable highland agriculture and development.
+              A prime mover of sustainable rootcrops industry.
             </p>
           </div>
         </div>
@@ -100,7 +100,7 @@
             </div>
             <div>
                 <h3 class="font-bold">Visit Us</h3>
-                <p class="text-green-100 text-sm">km6, La Trinidad, Benguet</p>
+                <p class="text-green-100 text-sm">Km. 6, La Trinidad, Benguet 2601 Philippines</p>
             </div>
         </div>
         <div class="bg-green-800 text-white p-8 rounded-2xl flex items-center gap-4">

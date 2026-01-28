@@ -4,12 +4,14 @@
       <div class="flex justify-between items-center h-16">
         
         <router-link to="/" class="flex items-center gap-2 group">
-          <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center shadow-md group-hover:bg-green-700 transition-colors">
-            <Sprout class="text-white w-6 h-6" />
-          </div>
+          <img 
+            src="@/assets/NorthernPhilippinesRootcrops.svg" 
+            alt="NPRCRTC Logo" 
+            class="h-12 w-auto hover:opacity-90 transition-opacity"
+          />
           <div class="flex flex-col">
             <span class="font-bold text-lg text-gray-900 leading-tight">BSU Rootcrops</span>
-            <span class="text-xs text-green-600 font-medium tracking-wide">RESEARCH & DEV</span>
+            <span class="text-xs text-green-600 font-medium tracking-wide">RESEARCH & TRAINING</span>
           </div>
         </router-link>
 
@@ -92,6 +94,7 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Sprout, Home as HomeIcon, FileText, LogIn, LogOut } from 'lucide-vue-next';
+
 
 // 1. Hook into the Router
 const route = useRoute();

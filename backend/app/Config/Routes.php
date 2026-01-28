@@ -16,3 +16,4 @@ $routes->get('uploads/researches/(:segment)', 'ResearchApi::serveFile/$1');
 $routes->put('api/researches/(:num)/archive', 'ResearchApi::archive/$1');
 $routes->post('api/auth/register', 'AuthApi::register');
 $routes->post('api/auth/login', 'AuthApi::login');
+$routes->get('api/researches/user/(:num)', 'ResearchController::getMySubmissions/$1');
