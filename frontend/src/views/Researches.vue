@@ -74,27 +74,59 @@
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
-        <div class="relative flex-grow">
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
+        
+        <div class="relative">
           <Search class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input 
             v-model="searchTerm"
             type="text" 
-            placeholder="Search by title, author, or keywords..." 
-            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all" 
+            placeholder="Search keywords in title or summary..." 
+            class="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition-all font-medium" 
           />
         </div>
-        <div class="relative min-w-[220px]">
-          <select 
-            v-model="filterType"
-            class="w-full pl-4 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none appearance-none bg-white font-medium" 
-          >
-            <option value="All">All Commodities</option>
-            <option v-for="type in ['Sweet Potato', 'White Potato', 'Cassava', 'Taro', 'Ube', 'Other']" :key="type" :value="type">
-              {{ type }}
-            </option>
-          </select>
-          <Filter class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <div class="relative">
+            <Calendar class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input 
+              v-model="filterDate"
+              type="date"
+              class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none appearance-none bg-white text-sm font-bold text-gray-600"
+            />
+          </div>
+
+          <div class="relative">
+            <FileText class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <select 
+              v-model="filterDocType"
+              class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none appearance-none bg-white text-sm font-bold text-gray-600"
+            >
+              <option value="All">All Doc Types</option>
+              <option value="Thesis">Thesis</option>
+              <option value="Dissertation">Dissertation</option>
+              <option value="Journal">Journal Article</option>
+              <option value="Report">Technical Report</option>
+            </select>
+            <Filter class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 w-3 h-3 pointer-events-none" />
+          </div>
+
+          <div class="relative">
+            <CheckCircle class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <select 
+              v-model="filterStatus"
+              class="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none appearance-none bg-white text-sm font-bold text-gray-600"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Published">Published</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Needs Revision">Needs Revision</option>
+              <option value="Draft">Draft</option>
+            </select>
+            <Filter class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 w-3 h-3 pointer-events-none" />
+          </div>
+
         </div>
       </div>
 
@@ -508,11 +540,12 @@ const isAnalyzing = ref(false)
 
 // Search & Filter State
 const searchTerm = ref('')
-const filterType = ref('All')
+const filterDate = ref('')
+const filterDocType = ref('All')
+const filterStatus = ref('All')
 const activeTab = ref('All')
 
 // Form State
-const fileInputRef = ref(null)
 const pdfFile = ref(null)
 const formData = ref({
   title: '',
@@ -543,32 +576,46 @@ const deadlineAlerts = computed(() => {
     .filter(alert => alert.daysLeft <= 14) 
 })
 
-// Logic for Filtering Tabs, Search, and Dropdowns
 const filteredResearches = computed(() => {
   return researches.value.filter(item => {
     
-    // 1. HANDLE ARCHIVE TAB (NEW LOGIC)
+    // 1. HIDE ARCHIVED (Admin Tab Logic)
     if (activeTab.value === 'Archived') {
-      // Only show items where isArchived is true/1
       return (item.isArchived == 1 || item.isArchived === true)
     }
-    
-    // 1. HIDE ARCHIVED ITEMS
     if (item.isArchived == 1 || item.isArchived === true) return false
 
-    // 2. Search & Type Filter
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.value.toLowerCase()) || 
-                          item.author.toLowerCase().includes(searchTerm.value.toLowerCase())
-    const matchesFilter = filterType.value === 'All' || item.cropType === filterType.value
-    
-    if (!matchesSearch || !matchesFilter) return false
+    // --- NEW FILTER LOGIC START ---
 
-    // 3. Tab Filters
+    // 2. Keyword Search (Title OR Summary/Abstract)
+    const term = searchTerm.value.toLowerCase()
+    const matchesKeyword = item.title.toLowerCase().includes(term) || 
+                           (item.abstract && item.abstract.toLowerCase().includes(term))
+
+    // 3. Date Filter (Matches specific date)
+    // Note: item.date is usually "YYYY-MM-DD" string from DB
+    const matchesDate = !filterDate.value || item.date === filterDate.value
+
+    // 4. Document Type Filter
+    // Note: Since DB doesn't have 'doc_type' yet, we skip this check if 'All'
+    // or map it to cropType if that was your intention. 
+    // For now, this assumes you might add a docType field later.
+    const matchesDocType = filterDocType.value === 'All' || item.docType === filterDocType.value
+
+    // 5. Status Filter
+    const matchesStatus = filterStatus.value === 'All' || item.status === filterStatus.value
+
+    // Combine all filters
+    if (!matchesKeyword || !matchesDate || !matchesDocType || !matchesStatus) return false
+
+    // --- NEW FILTER LOGIC END ---
+
+    // 6. Existing Tab Permission Logic
     if (activeTab.value === 'Review Queue') {
       return user.value?.role === 'Admin' && (item.status === 'Under Review' || item.status === 'Needs Revision')
     }
     if (activeTab.value === 'My Submissions') {
-      return item.submitterId === user.value?.id
+      return item.submitterId == user.value?.id 
     }
     if (activeTab.value === 'Research Logs') {
       return user.value?.role === 'Admin'
@@ -576,7 +623,7 @@ const filteredResearches = computed(() => {
     
     // Default: Public Gallery
     if (user.value?.role === 'Admin') return true 
-    if (user.value?.role === 'Researcher') return item.status === 'Published' || item.submitterId === user.value.id
+    if (user.value?.role === 'Researcher') return item.status === 'Published' || item.submitterId == user.value.id
     
     return item.status === 'Published'
   })
@@ -591,7 +638,7 @@ const fetchResearches = async () => {
     
     const params = {
       search: searchTerm.value,
-      crop_type: filterType.value
+      crop_type: 'All' // Default: Show all crops
     }
 
     const response = await axios.get('http://localhost:8080/api/researches', { params })
@@ -660,7 +707,7 @@ const handleSubmit = async () => {
 
 // --- 4. WATCHERS (Real-time Search) ---
 let debounceTimer = null
-watch([searchTerm, filterType], () => {
+watch([searchTerm, filterStatus, filterDocType,filterDate], () => {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => {
     fetchResearches()
