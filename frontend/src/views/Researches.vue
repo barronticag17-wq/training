@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <LandingNavbar :user="user" @logout="logout" />
+    <LandingNavbar :user="user" @logout="handleLogout" />
     <div class="space-y-6 p-6">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -825,4 +825,12 @@ onMounted(() => {
     router.push('/signin') 
   }
 })
+
+
+// THIS is the function that makes the button work
+const handleLogout = () => {
+  localStorage.removeItem('user'); // Clear data
+  user.value = null;               // Update UI
+  router.push('/signin');          // Redirect
+};
 </script>
