@@ -47,6 +47,13 @@
           >
             Research Logs
           </button>
+          <button 
+            @click="activeTab = 'Archived'"
+            class="px-6 py-3 font-bold text-sm transition-all border-b-2"
+            :class="activeTab === 'Archived' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+          >
+            Archived
+          </button>
         </template>
       </div>
 
@@ -91,7 +98,7 @@
         </div>
       </div>
 
-      <div v-if="activeTab === 'Research Logs'" class="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
+      <div v-if="activeTab === 'Research Logs' || activeTab === 'Archived'" class="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
@@ -476,6 +483,7 @@
 import LandingNavbar from '../components/LandingNavbar.vue';
 import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { 
   Plus, Search, Filter, Sparkles, X, Loader2, Calendar, 
   CheckCircle, AlertTriangle, Info, MessageSquare, Send, 
@@ -486,7 +494,7 @@ import {
 // --- 1. STATE MANAGEMENT ---
 
 // User & Data State
-const user = ref({ id: 'u1', name: 'Dr. Santos', role: 'Admin' })
+const user = ref(null)
 const researches = ref([])
 const isLoading = ref(false)
 
@@ -508,13 +516,15 @@ const fileInputRef = ref(null)
 const pdfFile = ref(null)
 const formData = ref({
   title: '',
-  author: user.value.name,
+  author: '',
   abstract: '',
   cropType: 'Sweet Potato',
   status: 'Under Review',
   deadlineDate: '',
   tags: []
 })
+
+const router = useRouter()
 
 // --- 2. COMPUTED PROPERTIES ---
 
@@ -537,9 +547,13 @@ const deadlineAlerts = computed(() => {
 const filteredResearches = computed(() => {
   return researches.value.filter(item => {
     
+    // 1. HANDLE ARCHIVE TAB (NEW LOGIC)
+    if (activeTab.value === 'Archived') {
+      // Only show items where isArchived is true/1
+      return (item.isArchived == 1 || item.isArchived === true)
+    }
+    
     // 1. HIDE ARCHIVED ITEMS
-    // If the backend says is_archived = 1 (or true), do not show it here.
-    // It should only appear on the Archive page.
     if (item.isArchived == 1 || item.isArchived === true) return false
 
     // 2. Search & Type Filter
@@ -631,7 +645,7 @@ const handleSubmit = async () => {
       isModalOpen.value = false;
       
       // Reset form
-      formData.value = { title: '', author: '', abstract: '', cropType: 'Sweet Potato', status: 'Under Review', deadlineDate: '', tags: [] };
+      formData.value = { title: '', author: 'user.value.name', abstract: '', cropType: 'Sweet Potato', status: 'Under Review', deadlineDate: '', tags: [] };
       pdfFile.value = null;
       
       // Refresh the grid to show new item
@@ -743,6 +757,25 @@ const archiveResearch = async (id) => {
 
 // --- 6. LIFECYCLE HOOKS ---
 onMounted(() => {
-  fetchResearches()
+  // 1. Check LocalStorage for User
+  const storedUser = localStorage.getItem('user')
+  
+  if (storedUser) {
+    // 2. Load User Data
+    user.value = JSON.parse(storedUser)
+    
+    // 3. Pre-fill the "Author" field in the form with the logged-in user's name
+    // Note: Database uses 'full_name', frontend logic used 'name'.
+    // Adjust based on your AuthApi response.
+    const realName = user.value.full_name || user.value.name;
+    formData.value.author = realName;
+    user.value.name = realName; // Standardize for UI
+    
+    // 4. Fetch Data
+    fetchResearches()
+  } else {
+    // 5. No User? Go back to Login
+    router.push('/signin') 
+  }
 })
 </script>

@@ -26,7 +26,7 @@
           </div>
           <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
             Northern Philippines <br />
-            <span class="text-green-400">RootCrops</span> Training Research Center
+            <span class="text-green-400">RootCrops</span> Research & Training  Center
           </h1>
           <p class="text-xl text-gray-200 mb-8 leading-relaxed max-w-2xl">
             Based at Benguet State University, we are dedicated to improving the production, utilization, and commercialization of root crops to support food security and sustainable livelihoods in the highlands.
@@ -100,7 +100,7 @@
             </div>
             <div>
                 <h3 class="font-bold">Visit Us</h3>
-                <p class="text-green-100 text-sm">Betag, BSU Compound, La Trinidad, Benguet</p>
+                <p class="text-green-100 text-sm">km6, La Trinidad, Benguet</p>
             </div>
         </div>
         <div class="bg-green-800 text-white p-8 rounded-2xl flex items-center gap-4">
@@ -130,6 +130,8 @@
 <script setup>
 import { Sprout, Target, Eye, ArrowRight, Leaf, MapPin, Phone, Mail } from 'lucide-vue-next';
 import LandingNavbar from '../components/LandingNavbar.vue';
+import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
 
 const crops = [
   { name: 'Sweet Potato', desc: 'Camote', color: 'bg-orange-50 text-orange-600', ring: 'ring-orange-100' },
@@ -137,4 +139,40 @@ const crops = [
   { name: 'Taro', desc: 'Gabi', color: 'bg-emerald-50 text-emerald-600', ring: 'ring-emerald-100' },
   { name: 'Purple Yam', desc: 'Ube', color: 'bg-purple-50 text-purple-600', ring: 'ring-purple-100' }
 ];
+
+// --- 1. STATE MANAGEMENT ---
+
+const router = useRouter()
+const user = ref(null)
+
+// --- 2. ACTIONS ---
+
+// 👇 THIS IS THE MISSING LOGOUT FUNCTION
+const logout = () => {
+  // 1. Remove the user data from browser storage
+  localStorage.removeItem('user');
+  
+  // 2. Reset the local state (optional, but good practice)
+  user.value = null;
+
+  // 3. Redirect back to the Login Page
+  router.push('/');
+}
+
+// --- 3. LIFECYCLE HOOKS ---
+onMounted(() => {
+  // 1. Check for logged-in user
+  const storedUser = localStorage.getItem('user')
+  
+  if (storedUser) {
+    // If found, load their data
+    user.value = JSON.parse(storedUser)
+  } else {
+    // If NOT found, kick them back to the Login page
+    router.push('/signin')
+  }
+  
+  // Note: I removed fetchResearches() because it is not defined in this file.
+  // This page is just the dashboard/welcome screen.
+})
 </script>
