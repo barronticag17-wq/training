@@ -1,7 +1,10 @@
 <template>
   <div class="min-h-screen bg-gray-50">
     <LandingNavbar :user="user" @logout="handleLogout" />
+
     <div class="space-y-6 p-6">
+
+      <!-- intro and new submission btn -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Research Management</h1>
@@ -16,7 +19,9 @@
           New Submission
         </button>
       </div>
+      <!-- end of intro -->
 
+      <!-- Tab Navigation System -->
       <div v-if="user" class="flex border-b border-gray-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
         <button 
           @click="activeTab = 'All'"
@@ -56,7 +61,9 @@
           </button>
         </template>
       </div>
+      <!-- End of Tab Navigation System -->
 
+      <!-- conditional deadline alerts -->
       <div v-if="user && deadlineAlerts.length > 0 && activeTab !== 'Research Logs'" class="space-y-2">
         <div 
           v-for="alert in deadlineAlerts" 
@@ -73,7 +80,9 @@
           </div>
         </div>
       </div>
+      <!-- end of conditional deadline alerts -->
 
+      <!-- Search and Filters -->
       <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 space-y-4">
         
         <div class="relative">
@@ -129,7 +138,9 @@
 
         </div>
       </div>
+      <!-- -----End of Search and Filters------ -->
 
+      <!-- ------- RESEARCH LOGS ---------- -->
       <div v-if="activeTab === 'Research Logs' || activeTab === 'Archived'" class="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
@@ -212,7 +223,9 @@
           <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">No research logs match your criteria</p>
         </div>
       </div>
+      <!-- ------END of Researches Logs-------- -->
 
+      <!-- Research Card Grid -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div 
           v-for="item in filteredResearches" 
@@ -324,7 +337,9 @@
           </div>
         </div>
       </div>
+      <!-- End of Research Card Grid -->
 
+      <!-- Submission of new research Modal-->
       <div v-if="isModalOpen" class="fixed inset-0 bg-green-950/40 z-50 flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
           <div class="p-10 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
@@ -418,7 +433,9 @@
           </form>
         </div>
       </div>
+       <!-- End of Submission of new research Modal -->
 
+      <!-- PDF Viewer Modal when clicked the read article button -->
       <div v-if="isPdfViewerOpen && selectedResearch" class="fixed inset-0 bg-green-950/60 z-[60] flex items-center justify-center p-4 backdrop-blur-lg">
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
           <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
@@ -447,7 +464,9 @@
           </div>
         </div>
       </div>
+      <!-- End of PDF Viewer Modal -->
 
+      <!-- Feedback/Comment Modal -->
       <div v-if="isCommentModalOpen && selectedResearch" class="fixed inset-0 bg-green-950/40 z-50 flex items-center justify-center p-4 backdrop-blur-md">
         <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-xl flex flex-col h-[70vh]">
           <div class="p-8 border-b border-gray-100 flex justify-between items-center">
@@ -507,6 +526,7 @@
           </div>
         </div>
       </div>
+      <!-- End of Feedback/Comment Modal -->
     </div>
   </div>
 </template>
@@ -584,8 +604,6 @@ const filteredResearches = computed(() => {
       return (item.isArchived == 1 || item.isArchived === true)
     }
     if (item.isArchived == 1 || item.isArchived === true) return false
-
-    // --- NEW FILTER LOGIC START ---
 
     // 2. Keyword Search (Title OR Summary/Abstract)
     const term = searchTerm.value.toLowerCase()
@@ -768,13 +786,31 @@ const handlePostComment = () => {
 }
 
 // Admin Actions
-const approveResearch = (id) => {
-    const item = researches.value.find(r => r.id === id)
-    if(item) {
-        item.status = 'Published'
-        item.approvedDate = new Date().toISOString().split('T')[0]
+const approveResearch = async (id) => {
+  if (!confirm('Are you sure you want to approve and publish this research?')) return;
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/researches/${id}/approve`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (response.ok) {
+      // Update the local list so the UI changes immediately
+      const index = researches.value.findIndex(r => r.id === id);
+      if (index !== -1) {
+        researches.value[index].status = 'Published';
+      }
+      alert('Research published successfully!');
+    } else {
+      alert('Failed to approve research.');
     }
-}
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
 
 const flagRevision = () => {
     if(selectedResearch.value) {

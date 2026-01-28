@@ -101,4 +101,27 @@ class ResearchApi extends ResourceController
 
         return $this->fail('Failed to archive research');
     }
+
+    public function approve($id = null)
+    {
+        $model = new \App\Models\ResearchModel();
+
+        // Check if research exists
+        $research = $model->find($id);
+        if (!$research) {
+            return $this->failNotFound('Research not found');
+        }
+
+        // Update status to Published
+        $data = [
+            'status' => 'Published',
+            'updated_at' => date('Y-m-d H:i:s') // CodeIgniter Model handles this if useTimestamps is true
+        ];
+
+        if ($model->update($id, $data)) {
+            return $this->respondUpdated(['message' => 'Status updated to Published']);
+        }
+
+        return $this->fail('Failed to update status');
+    }
 }

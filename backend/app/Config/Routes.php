@@ -17,3 +17,5 @@ $routes->put('api/researches/(:num)/archive', 'ResearchApi::archive/$1');
 $routes->post('api/auth/register', 'AuthApi::register');
 $routes->post('api/auth/login', 'AuthApi::login');
 $routes->get('api/researches/user/(:num)', 'ResearchController::getMySubmissions/$1');
+// Add this to app/Config/Routes.php
+$routes->put('api/researches/(:num)/approve', 'ResearchApi::approve/$1');
