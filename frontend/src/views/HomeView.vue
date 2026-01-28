@@ -1,18 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-sans">
     
-    <LandingNavbar />
-    <div class="p-10">
-      <h1 class="text-3xl font-bold text-green-700">Welcome Home!</h1>
-      
-      <p v-if="user" class="text-gray-600 mt-2">
-        Hello, <strong>{{ user.full_name }}</strong> ({{ user.role }})
-      </p>
-
-      <button @click="logout" class="mt-4 bg-red-500 text-white px-4 py-2 rounded">
-        Logout
-      </button>
-    </div>
+    <LandingNavbar :user="user" @logout="logout" />
     <div class="space-y-16 pb-12 p-4 md:p-8 max-w-7xl mx-auto">
       
       <section class="relative bg-green-900 text-white rounded-3xl overflow-hidden shadow-xl min-h-[500px] flex items-center">
@@ -132,13 +121,6 @@ import { Sprout, Target, Eye, ArrowRight, Leaf, MapPin, Phone, Mail } from 'luci
 import LandingNavbar from '../components/LandingNavbar.vue';
 import { useRouter } from 'vue-router';
 import { ref, onMounted } from 'vue'
-
-const crops = [
-  { name: 'Sweet Potato', desc: 'Camote', color: 'bg-orange-50 text-orange-600', ring: 'ring-orange-100' },
-  { name: 'White Potato', desc: 'Patatas', color: 'bg-yellow-50 text-yellow-600', ring: 'ring-yellow-100' },
-  { name: 'Taro', desc: 'Gabi', color: 'bg-emerald-50 text-emerald-600', ring: 'ring-emerald-100' },
-  { name: 'Purple Yam', desc: 'Ube', color: 'bg-purple-50 text-purple-600', ring: 'ring-purple-100' }
-];
 
 // --- 1. STATE MANAGEMENT ---
 

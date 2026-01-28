@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <LandingNavbar />
+    <LandingNavbar :user="user" @logout="logout" />
     <div class="space-y-6 p-6">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
