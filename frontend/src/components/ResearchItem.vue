@@ -85,6 +85,7 @@
   <div 
     v-else
     class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:border-green-200 hover:shadow-md transition-all flex items-center gap-6 group relative"
+    @click="$emit('viewPdf', item)"
   >
     <div class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl" :class="statusClasses.split(' ')[0].replace('bg-', 'bg-')"></div>
 

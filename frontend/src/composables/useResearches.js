@@ -47,6 +47,9 @@ export function useResearches(user) {
       const currentUser = user.value
 
       // 6. Existing Tab Permission Logic
+      if (activeTab.value === 'All') {
+        return item.status === 'Published';
+      }
       if (activeTab.value === 'Review Queue') {
         return currentUser?.role === 'Admin' && (item.status === 'Under Review' || item.status === 'Needs Revision')
       }
@@ -56,12 +59,8 @@ export function useResearches(user) {
       if (activeTab.value === 'Research Logs') {
         return currentUser?.role === 'Admin'
       }
-      
-      // Default: Public Gallery
-      if (currentUser?.role === 'Admin') return true 
-      if (currentUser?.role === 'Researcher') return item.status === 'Published' || item.submitterId == user.value.id
-      
-      return item.status === 'Published'
+
+      return true
     })
   })
 
