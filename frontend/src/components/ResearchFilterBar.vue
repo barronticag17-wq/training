@@ -41,7 +41,7 @@
 
         <button 
           v-if="modelValue.startDate || modelValue.endDate"
-          @click="update('startDate', ''); update('endDate', '')"
+          @click="clearDates"
           class="p-2 bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
           title="Clear Dates"
         >
@@ -93,5 +93,13 @@ const emit = defineEmits(['update:modelValue'])
 const update = (key, value) => {
   // Emits a new object with the updated field
   emit('update:modelValue', { ...props.modelValue, [key]: value })
+}
+
+const clearDates = () => {
+  emit('update:modelValue', { 
+    ...props.modelValue, 
+    startDate: '', 
+    endDate: '' 
+  })
 }
 </script>

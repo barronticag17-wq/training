@@ -43,7 +43,7 @@
         </template>
       </div>
 
-      <div v-if="user && deadlineAlerts.length > 0 && activeTab !== 'Research Logs'" class="space-y-2">
+      <div v-if="user && user.role === 'Admin' && deadlineAlerts.length > 0 && activeTab !== 'Research Logs'" class="space-y-2">
         <div v-for="alert in deadlineAlerts" :key="alert.id" class="flex items-center gap-3 p-4 rounded-xl border-2" :class="alert.isOverdue ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-800'">
           <AlertTriangle class="w-6 h-6 flex-shrink-0" />
           <div class="flex-grow">
