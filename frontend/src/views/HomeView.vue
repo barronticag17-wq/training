@@ -234,15 +234,9 @@ const user = ref(null)
 
 // --- 2. ACTIONS ---
 
-// 👇 THIS IS THE MISSING LOGOUT FUNCTION
 const logout = () => {
-  // 1. Remove the user data from browser storage
   localStorage.removeItem('user');
-  
-  // 2. Reset the local state (optional, but good practice)
   user.value = null;
-
-  // 3. Redirect back to the Login Page
   router.push('/');
 }
 
@@ -254,12 +248,7 @@ onMounted(() => {
   if (storedUser) {
     // If found, load their data
     user.value = JSON.parse(storedUser)
-  } else {
-    // If NOT found, kick them back to the Login page
-    router.push('/signin')
   }
-  
-  // Note: I removed fetchResearches() because it is not defined in this file.
-  // This page is just the dashboard/welcome screen.
+
 })
 </script>

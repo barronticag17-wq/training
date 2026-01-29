@@ -10,7 +10,7 @@
           <p class="text-gray-500">Collaborate, review, and discover root crop studies.</p>
         </div>
         <button 
-          v-if="user" 
+          v-if="user && user.role !== 'User'"
           @click="isModalOpen = true" 
           class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 font-bold transition-all shadow-lg shadow-green-100"
         >
@@ -21,7 +21,7 @@
 
       <div v-if="user" class="flex border-b border-gray-200 overflow-x-auto whitespace-nowrap scrollbar-hide">
         <button 
-          v-for="tab in ['All', 'My Submissions']" 
+          v-for="tab in (user.role === 'User' ? ['All'] : ['All', 'My Submissions'])"
           :key="tab"
           @click="activeTab = tab"
           class="px-6 py-3 font-bold text-sm transition-all border-b-2"
