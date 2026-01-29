@@ -9,7 +9,8 @@ export function useResearches(user) {
 
   const filters = ref({
     search: '',
-    date: '',
+    startDate: '',
+    endDate: '',
     docType: 'All',
     status: 'All',
   })
@@ -31,7 +32,14 @@ export function useResearches(user) {
                             (item.abstract && item.abstract.toLowerCase().includes(term))
 
       // 3. Date Filter
-      const matchesDate = !filters.value.date || item.date === filters.value.date
+
+      const itemDate = new Date(item.deadlineDate || item.date); // Ensure you pick the correct date field
+      const start = filters.value.startDate ? new Date(filters.value.startDate) : null;
+      const end = filters.value.endDate ? new Date(filters.value.endDate) : null;
+
+      const matchesDate = (!start || itemDate >= start) && 
+                    (!end || itemDate <= end);
+
 
       // 4. Document Type Filter
       const matchesDocType = filters.value.docType === 'All' || item.docType === filters.value.docType
