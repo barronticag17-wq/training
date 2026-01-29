@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2026 at 02:25 AM
+-- Generation Time: Jan 29, 2026 at 02:52 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -64,15 +64,21 @@ CREATE TABLE `researches` (
   `submitter_id` int(5) NOT NULL,
   `pdf_path` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
-  `is_archived` tinyint(1) DEFAULT 0
+  `is_archived` tinyint(1) DEFAULT 0,
+  `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `researches`
 --
 
-INSERT INTO `researches` (`id`, `title`, `author`, `abstract`, `crop_type`, `status`, `deadline_date`, `submitter_id`, `pdf_path`, `created_at`, `is_archived`) VALUES
-(1, 'admin', 'Dr. Santos', 're', 'Sweet Potato', 'Published', '2026-01-21', 0, '1769503405_7cb3ad84bbc0c7eebb7e.pdf', '2026-01-27 16:43:27', 0);
+INSERT INTO `researches` (`id`, `title`, `author`, `abstract`, `crop_type`, `status`, `deadline_date`, `submitter_id`, `pdf_path`, `created_at`, `is_archived`, `updated_at`) VALUES
+(1, 'admin', 'Dr. Santos', 're', 'Sweet Potato', 'Published', '2026-01-21', 0, '1769503405_7cb3ad84bbc0c7eebb7e.pdf', '2026-01-27 16:43:27', 0, '2026-01-28 14:40:16'),
+(2, 'check', 'hello', 'd', 'Sweet Potato', 'Published', '2024-02-02', 1, NULL, '2026-01-28 10:04:05', 1, '2026-01-28 14:40:16'),
+(3, 'check', 'System Administrator', 'de', 'Sweet Potato', 'Published', '2026-01-20', 1, NULL, '2026-01-28 11:09:40', 0, '2026-01-28 14:40:16'),
+(4, 'ivan james', 'System Administrator', 'need \r\n', 'Sweet Potato', 'Published', '2026-01-20', 1, NULL, '2026-01-28 11:26:31', 0, '2026-01-28 14:40:16'),
+(5, 'check', 'Dr. Juan Dela Cruz', 'check', 'Sweet Potato', 'Under Review', '2026-01-30', 2, NULL, '2026-01-28 06:41:56', 0, '2026-01-28 06:41:56'),
+(6, 'check1', 'Dr. Juan Dela Cruz', 'dssd', 'Sweet Potato', 'Published', '2026-02-11', 2, NULL, '2026-01-28 06:47:46', 0, '2026-01-28 08:17:40');
 
 -- --------------------------------------------------------
 
@@ -102,7 +108,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `full_name`, `role`, `department`, `bio`, `avatar`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 'admin', 'admin@bsu.edu.ph', '$2y$10$7Idk93Y8DEyZ5LzcvJZ3ge3uDqmvgn1Lw.7yoYJAJB3rQP68RCZ4u', 'System Administrator', 'Admin', 'IT Department', 'Maintains the Root Crops Research Portal.', NULL, '2026-01-27 08:33:21', '2026-01-27 16:33:21', NULL),
 (2, 'researcher', 'researcher@bsu.edu.ph', '$2y$10$qKLL/Uvqaua1Jt.XJ1/cI.JugesdH1kxJvs5egcqkIWr.wsR3QL/.', 'Dr. Juan Dela Cruz', 'Researcher', 'Root Crops Institute', 'Specialist in sweet potato genetic diversity.', NULL, '2026-01-27 08:33:21', '2026-01-27 16:33:21', NULL),
-(3, 'student', 'student@bsu.edu.ph', '$2y$10$9p6okFCJ4U2stPjlvmZRi.WAhhrKx578EPUwqetApgjt9Or6oY1EK', 'Maria Clara', 'User', 'College of Agriculture', 'Undergraduate student researching taro pests.', NULL, '2026-01-27 08:33:21', '2026-01-27 16:33:21', NULL);
+(3, 'student', 'student@bsu.edu.ph', '$2y$10$9p6okFCJ4U2stPjlvmZRi.WAhhrKx578EPUwqetApgjt9Or6oY1EK', 'Maria Clara', 'User', 'College of Agriculture', 'Undergraduate student researching taro pests.', NULL, '2026-01-27 08:33:21', '2026-01-27 16:33:21', NULL),
+(6, 'Researcher123', 'summacumlaudeivan@gmail.com', '$2y$10$wENMhYDX0MiCxGcSnl6m/OTbFiVIIt5gCzY17fFhFyeuZtNcik9w2', 'Dr.Rodriguez', 'User', 'N/A', 'New user.', NULL, '2026-01-28 02:17:25', '2026-01-28 02:17:25', NULL);
 
 --
 -- Indexes for dumped tables
@@ -142,13 +149,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `researches`
 --
 ALTER TABLE `researches`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
