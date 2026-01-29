@@ -54,7 +54,7 @@
         </div>
       </div>
 
-      <pre class="bg-slate-900 text-yellow-400 p-4 text-[10px] overflow-auto rounded-xl">
+      <!-- <pre class="bg-slate-900 text-yellow-400 p-4 text-[10px] overflow-auto rounded-xl">
         API LOADING: {{ isLoading }}
         USER LOGGED IN: {{ !!user }}
         
@@ -63,7 +63,7 @@
 
         RAW DATA PREVIEW:
         {{ researches && researches.length > 0 ? researches : 'No data in researches array' }}
-      </pre>
+      </pre> -->
       <ResearchFilterBar v-model="filters" />
 
       <!-- Card or List Toggle -->
@@ -175,13 +175,28 @@
         </div>
       </div>
 
-      <div v-if="isPdfViewerOpen && selectedResearch" class="fixed inset-0 bg-green-950/60 z-[60] flex items-center justify-center p-4 backdrop-blur-lg">
-        <div class="bg-white rounded-[40px] shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
-          <div class="p-6 border-b flex justify-between items-center">
-            <h3 class="font-black">{{ selectedResearch.title }}</h3>
-            <button @click="isPdfViewerOpen = false"><X class="w-6 h-6 text-gray-400" /></button>
+      <div v-if="isPdfViewerOpen && selectedResearch" class="fixed inset-0 bg-white z-[60] flex flex-col overflow-hidden">
+        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+          <div class="flex items-center gap-4">
+            <button @click="isPdfViewerOpen = false" class="hover:bg-gray-200 p-2 rounded-full transition-colors">
+              <X class="w-6 h-6 text-gray-600" />
+            </button>
+            <h3 class="font-black text-gray-900 truncate max-w-md md:max-w-2xl">
+              {{ selectedResearch.title }}
+            </h3>
           </div>
-          <iframe :src="selectedResearch.pdfUrl" class="w-full h-full" frameborder="0"></iframe>
+          
+          <a :href="selectedResearch.pdfUrl" target="_blank" class="text-xs font-bold text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+            Open in New Tab
+          </a>
+        </div>
+
+        <div class="flex-grow w-full h-full bg-gray-100">
+          <iframe 
+            :src="selectedResearch.pdfUrl" 
+            class="w-full h-full border-none" 
+            frameborder="0"
+          ></iframe>
         </div>
       </div>
 

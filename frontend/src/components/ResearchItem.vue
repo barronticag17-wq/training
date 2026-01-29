@@ -40,7 +40,7 @@
             <span class="font-bold text-gray-700">{{ item.author }}</span>
           </div>
           <div class="flex flex-col items-end gap-1">
-            <span v-if="item.deadlineDate" class="flex items-center gap-1 font-bold" :class="isOverdue ? 'text-red-500' : 'text-gray-400'">
+            <span v-if="item.deadlineDate && item.status !== 'Published'" class="flex items-center gap-1 font-bold" :class="isOverdue ? 'text-red-500' : 'text-gray-400'">
               <Calendar class="w-3.5 h-3.5" />
               Due: {{ item.deadlineDate }}
             </span>
@@ -85,7 +85,6 @@
   <div 
     v-else
     class="bg-white py-4 px-10 mx-30 rounded-xl shadow-sm border border-gray-100 hover:border-green-200 hover:shadow-md transition-all flex items-center gap-6 group relative"
-    @click="$emit('viewPdf', item)"
   >
     <div class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl" :class="statusClasses.split(' ')[0].replace('bg-', 'bg-')"></div>
 
@@ -95,7 +94,7 @@
         </div>
     </div>
 
-    <div class="flex-grow min-w-0 flex flex-col gap-1">
+    <div class="flex-grow min-w-0 flex flex-col gap-1" @click="$emit('viewPdf', item)">
         <div class="flex items-center gap-2">
             <span class="text-[10px] font-black text-green-600 uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-md">
                 {{ item.docType }}
