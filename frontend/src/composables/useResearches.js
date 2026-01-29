@@ -79,7 +79,7 @@ export function useResearches(user) {
       
       const params = {
         search: filters.value.search,
-        crop_type: 'All' // Default: Show all crops
+        doc_type: 'All' // Default: Show all document types
       }
 
       const response = await axios.get('http://localhost:8080/api/researches', { params })
@@ -89,7 +89,7 @@ export function useResearches(user) {
         title: item.title,
         author: item.author || 'Unknown Author', 
         abstract: item.abstract,
-        cropType: item.crop_type,
+        docType: item.doc_type,
         date: item.created_at?.split(' ')[0],
         deadlineDate: item.deadline_date,
         status: item.status,

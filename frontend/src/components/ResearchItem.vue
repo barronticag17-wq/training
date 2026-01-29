@@ -13,7 +13,7 @@
 
     <div class="flex justify-between items-start mb-4">
       <span class="text-xs font-black text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1.5 rounded-full">
-        {{ item.cropType }}
+        {{ item.docType }}
       </span>
     </div>
     
@@ -84,7 +84,7 @@
 
   <div 
     v-else
-    class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:border-green-200 hover:shadow-md transition-all flex items-center gap-6 group relative"
+    class="bg-white py-4 px-10 mx-30 rounded-xl shadow-sm border border-gray-100 hover:border-green-200 hover:shadow-md transition-all flex items-center gap-6 group relative"
     @click="$emit('viewPdf', item)"
   >
     <div class="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl" :class="statusClasses.split(' ')[0].replace('bg-', 'bg-')"></div>
@@ -98,7 +98,7 @@
     <div class="flex-grow min-w-0 flex flex-col gap-1">
         <div class="flex items-center gap-2">
             <span class="text-[10px] font-black text-green-600 uppercase tracking-widest bg-green-50 px-2 py-0.5 rounded-md">
-                {{ item.cropType }}
+                {{ item.docType }}
             </span>
             <h3 class="text-sm font-bold text-gray-900 truncate group-hover:text-green-700 transition-colors">
                 {{ item.title }}

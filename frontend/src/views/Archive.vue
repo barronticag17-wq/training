@@ -16,7 +16,7 @@
       >
         <div class="flex justify-between items-start mb-3">
           <span class="text-xs font-bold text-gray-500 uppercase tracking-wide bg-gray-100 px-2 py-1 rounded">
-            {{ item.cropType }}
+            {{ item.docType }}
           </span>
           <span class="text-xs text-red-500 border border-red-200 px-2 py-1 rounded-full font-medium">
             Archived
@@ -44,30 +44,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { ArchiveRestore, FileText } from 'lucide-vue-next'
-
-// --- MOCK DATA ---
-// In a real app, this would come from the same Store/API as your Researches page.
-// I've added some dummy data here so you can see it working immediately.
-const researches = ref([
-  {
-    id: 'archived-1',
-    title: 'Old Study on Potato Blight 2019',
-    author: 'Dr. Old',
-    abstract: 'This study is outdated and has been superseded by newer findings in 2023.',
-    cropType: 'White Potato',
-    isArchived: true
-  },
-  {
-    id: 'archived-2',
-    title: 'Discarded Draft: Ube Planting',
-    author: 'Researcher X',
-    abstract: 'Initial findings were inconclusive regarding the soil acidity levels.',
-    cropType: 'Ube',
-    isArchived: true
-  }
-])
 
 // --- COMPUTED ---
 const archivedItems = computed(() => {

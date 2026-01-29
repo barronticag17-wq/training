@@ -28,7 +28,7 @@ class ResearchApi extends ResourceController
             'title'         => $this->request->getPost('title'),
             'author'        => $this->request->getPost('author'),
             'abstract'      => $this->request->getPost('abstract'),
-            'crop_type'     => $this->request->getPost('crop_type'),
+            'doc_type'     => $this->request->getPost('doc_type'),
             'status'        => $this->request->getPost('status'),
             'deadline_date' => $this->request->getPost('deadline_date'),
             'submitter_id'  => $this->request->getPost('submitter_id'),
@@ -47,7 +47,7 @@ class ResearchApi extends ResourceController
     {
         // 1. Get parameters from the URL (sent by Vue)
         $search   = $this->request->getGet('search');
-        $cropType = $this->request->getGet('crop_type');
+        $docType = $this->request->getGet('doc_type');
 
         // 2. Add Search Conditions (if user typed something)
         if ($search) {
@@ -58,9 +58,9 @@ class ResearchApi extends ResourceController
                         ->groupEnd(); // End bracket )
         }
 
-        // 3. Add Filter Condition (if user selected a specific crop)
-        if ($cropType && $cropType !== 'All') {
-            $this->model->where('crop_type', $cropType);
+        // 3. Add Filter Condition (if user selected a specific doc)
+        if ($docType && $docType !== 'All') {
+            $this->model->where('doc_type', $docType);
         }
 
         // 4. Finally, Execute the query

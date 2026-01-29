@@ -1,3 +1,4 @@
+
 <template>
   <div class="min-h-screen bg-gray-50">
     <LandingNavbar :user="user" @logout="handleLogout" />
@@ -53,6 +54,16 @@
         </div>
       </div>
 
+      <pre class="bg-slate-900 text-yellow-400 p-4 text-[10px] overflow-auto rounded-xl">
+        API LOADING: {{ isLoading }}
+        USER LOGGED IN: {{ !!user }}
+        
+        RAW RESEARCHES COUNT: {{ researches?.length || 0 }}
+        FILTERED COUNT: {{ filteredResearches?.length || 0 }}
+
+        RAW DATA PREVIEW:
+        {{ researches && researches.length > 0 ? researches : 'No data in researches array' }}
+      </pre>
       <ResearchFilterBar v-model="filters" />
 
       <!-- Card or List Toggle -->
@@ -118,6 +129,25 @@
               <div class="space-y-2">
                 <label class="text-sm font-black text-gray-400 uppercase tracking-widest px-1">Deadline</label>
                 <input v-model="formData.deadlineDate" required type="date" class="w-full p-4 bg-gray-50 border-b-2 border-gray-200 focus:border-green-600 outline-none font-bold" />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-black text-gray-400 uppercase tracking-widest px-1">Document Type</label>
+                <div class="relative">
+                  <select 
+                    v-model="formData.docType" 
+                    required
+                    class="w-full p-4 bg-gray-50 border-b-2 border-gray-200 focus:border-green-600 outline-none font-bold appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled>Select Type</option>
+                    <option value="Thesis">Thesis</option>
+                    <option value="Dissertation">Dissertation</option>
+                    <option value="Journal">Journal Article</option>
+                    <option value="Report">Technical Report</option>
+                  </select>
+                  <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <ChevronDown class="w-5 h-5" />
+                  </div>
+                </div>
               </div>
             </div>
             <div class="space-y-2">
@@ -234,7 +264,7 @@ const formData = ref({
   title: '',
   author: '',
   abstract: '',
-  cropType: 'Sweet Potato',
+  docType: 'Thesis',
   status: 'Under Review',
   deadlineDate: '',
   tags: []
@@ -278,7 +308,7 @@ const handleSubmit = async () => {
     submissionData.append('author', formData.value.author);
     submissionData.append('abstract', formData.value.abstract);
     submissionData.append('deadline_date', formData.value.deadlineDate);
-    submissionData.append('crop_type', 'Sweet Potato'); 
+    submissionData.append('doc_type', formData.value.docType); 
     submissionData.append('status', user.value?.role === 'Admin' ? 'Published' : 'Under Review');
     submissionData.append('submitter_id', user.value?.id);
     if (pdfFile.value) submissionData.append('pdf_file', pdfFile.value);
