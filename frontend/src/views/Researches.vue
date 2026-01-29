@@ -55,6 +55,24 @@
 
       <ResearchFilterBar v-model="filters" />
 
+      <!-- Card or List Toggle -->
+      <div class="flex justify-end mb-4 gap-2">
+        <button 
+          @click="viewMode = 'card'"
+          class="p-2 rounded-lg transition-colors"
+          :class="viewMode === 'card' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-500'"
+        >
+          <LayoutGrid class="w-5 h-5" />
+        </button>
+        <button 
+          @click="viewMode = 'list'"
+          class="p-2 rounded-lg transition-colors"
+          :class="viewMode === 'list' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-500'"
+        >
+          <List class="w-5 h-5" />
+        </button>
+      </div>
+
       <div v-if="isLoading" class="py-20 text-center">
         <Loader2 class="w-10 h-10 animate-spin text-green-600 mx-auto" />
       </div>
@@ -64,12 +82,16 @@
         <p class="text-gray-500 font-bold">No researches found.</p>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <ResearchCard 
+      <div v-else 
+          :class="viewMode === 'card'?'grid grid-cols-1 md:grid-cols-2 gap-8' : 'flex flex-col gap-4'"
+      >
+
+        <ResearchItem 
           v-for="item in filteredResearches" 
           :key="item.id" 
           :item="item" 
           :user="user"
+          :view-mode="viewMode"
           @viewPdf="openPdfViewer"
           @viewComments="openComments"
           @approve="approveResearch"
@@ -162,21 +184,32 @@
 <script setup>
 import LandingNavbar from '../components/LandingNavbar.vue';
 import ResearchFilterBar from '../components/ResearchFilterBar.vue';
-import ResearchCard from '../components/ResearchCard.vue';
+import ResearchItem from '../components/ResearchItem.vue';
 
 // Import Logic
 import { useResearches } from '../composables/useResearches';
-import { ref, computed, onMounted } from 'vue';
+import { ref, 
+        computed, 
+        onMounted 
+} from 'vue';
+
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import { Plus, AlertTriangle, Loader2, List, X, Sparkles, Send } from 'lucide-vue-next';
+import { Plus, 
+        AlertTriangle, 
+        Loader2, 
+        List, 
+        X, 
+        Sparkles, 
+        Send, 
+        LayoutGrid
+} from 'lucide-vue-next';
 
 // --- 1. SETUP ---
 const router = useRouter();
 const user = ref(null);
 
 // Initialize Composable
-// This gives us all the data and logic we extracted!
 const { 
   researches, 
   filteredResearches, 
@@ -206,6 +239,9 @@ const formData = ref({
   deadlineDate: '',
   tags: []
 });
+
+const viewMode = ref('card') // 'card' or 'list'
+
 
 // --- 3. COMPUTED HELPER (Deadline Alerts) ---
 const deadlineAlerts = computed(() => {
