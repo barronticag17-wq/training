@@ -44,12 +44,52 @@
         </template>
       </div>
 
-      <div v-if="user && user.role === 'Admin' && deadlineAlerts.length > 0 && activeTab !== 'Research Logs'" class="space-y-2">
-        <div v-for="alert in deadlineAlerts" :key="alert.id" class="flex items-center gap-3 p-4 rounded-xl border-2" :class="alert.isOverdue ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-800'">
-          <AlertTriangle class="w-6 h-6 flex-shrink-0" />
-          <div class="flex-grow">
-            <p class="text-sm font-bold">Action Required: {{ alert.title }}</p>
-            <p class="text-xs opacity-80">{{ alert.isOverdue ? 'Deadline passed.' : `Due in ${alert.daysLeft} days.` }}</p>
+      <div 
+        v-if="user && user.role === 'Admin' && deadlineAlerts.length > 0 && activeTab !== 'Research Logs'" 
+        class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+      >
+        <div class="px-6 py-3 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+            <h3 class="text-xs font-black text-gray-500 uppercase tracking-widest">
+              Pending Reviews ({{ deadlineAlerts.length }})
+            </h3>
+          </div>
+        </div>
+
+        <div class="max-h-60 overflow-y-auto p-2 space-y-2 custom-scrollbar">
+          <div 
+            v-for="alert in deadlineAlerts" 
+            :key="alert.id" 
+            class="flex items-center gap-3 p-3 rounded-xl transition-all group hover:shadow-md"
+            :class="alert.isOverdue ? 'bg-red-50 border border-red-100' : 'bg-amber-50 border border-amber-100'"
+          >
+            <div 
+              class="p-2 rounded-lg bg-white shadow-sm flex-shrink-0"
+              :class="alert.isOverdue ? 'text-red-500' : 'text-amber-500'"
+            >
+              <AlertTriangle class="w-5 h-5" />
+            </div>
+
+            <div class="flex-grow min-w-0">
+              <div class="flex items-center gap-2">
+                <p class="text-sm font-bold text-gray-800 truncate">{{ alert.title }}</p>
+                <span v-if="alert.isOverdue" class="px-2 py-0.5 rounded text-[10px] font-black bg-red-200 text-red-800 uppercase">Late</span>
+              </div>
+              <p class="text-xs font-medium opacity-80 mt-0.5 flex items-center gap-1">
+                <span class="font-bold">Author:</span> {{ alert.author || 'Unknown' }} • 
+                <span :class="alert.isOverdue ? 'text-red-700 font-bold' : 'text-amber-700'">
+                  {{ alert.isOverdue ? `Overdue by ${Math.abs(alert.daysLeft)} days` : `Due in ${alert.daysLeft} days` }}
+                </span>
+              </p>
+            </div>
+
+            <button 
+              @click="openPdfViewer(alert)" 
+              class="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-lg text-xs font-bold border border-gray-200 shadow-sm hover:text-green-600 hover:border-green-200 whitespace-nowrap"
+            >
+              Review Now
+            </button>
           </div>
         </div>
       </div>
@@ -288,18 +328,29 @@ const formData = ref({
 const viewMode = ref('card') // 'card' or 'list'
 
 
-// --- 3. COMPUTED HELPER (Deadline Alerts) ---
+// --- 3. DEADLINE ALERTS (✅ UPDATED: Admin Review Queue) ---
 const deadlineAlerts = computed(() => {
-  if (!user.value) return [];
+  // Only Admins need to see the global "Review Queue" alerts
+  if (!user.value || user.value.role !== 'Admin') return [];
+  
   const now = new Date();
+  
   return researches.value
-    .filter(r => r.submitterId == user.value.id && r.deadlineDate && r.status !== 'Published' && !r.isArchived)
+    // Filter: All items that are 'Under Review', have a deadline, and are NOT archived
+    .filter(r => r.status === 'Under Review' && r.deadlineDate && !r.isArchived)
     .map(r => {
       const deadline = new Date(r.deadlineDate);
       const diffDays = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-      return { id: r.id, title: r.title, daysLeft: diffDays, isOverdue: diffDays < 0 };
+      
+      return { 
+        id: r.id, 
+        title: r.title, 
+        daysLeft: diffDays, 
+        isOverdue: diffDays < 0 // Helper for red styling
+      };
     })
-    .filter(alert => alert.daysLeft <= 14);
+    // Sort: Overdue items (negative numbers) first, then nearest deadlines
+    .sort((a, b) => a.daysLeft - b.daysLeft);
 });
 
 // --- 4. FORM ACTIONS (Kept local for now) ---

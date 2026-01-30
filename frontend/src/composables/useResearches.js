@@ -7,6 +7,9 @@ export function useResearches(user) {
   const isLoading = ref(false)
   const activeTab = ref('All')
 
+  // ✅ NEW: Define quickFilter here so it can be shared
+  const quickFilter = ref('All')
+  
   const filters = ref({
     search: '',
     startDate: '',
@@ -69,6 +72,19 @@ export function useResearches(user) {
       }
 
       return true
+
+      // --- 4. NEW: DASHBOARD QUICK FILTER ---
+      let matchesQuick = true;
+      if (quickFilter.value === 'Overdue') {
+          matchesQuick = item.status === 'Under Review' && new Date(item.deadlineDate) < now;
+      } else if (quickFilter.value === 'DueSoon') {
+          const diff = Math.ceil((new Date(item.deadlineDate) - now) / (86400000));
+          matchesQuick = item.status === 'Under Review' && diff >= 0 && diff <= 7;
+      } else if (quickFilter.value === 'Pending') {
+          matchesQuick = item.status === 'Under Review';
+      }
+
+      return matchesSearch && matchesType && matchesStatus && matchesQuick;
     })
   })
 
